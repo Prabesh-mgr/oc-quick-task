@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from '../models/Users.js';
+import User from '../../models/Users.js';
 import dotenv from 'dotenv';
-import userSchema from '../schema/validationUser/index.js';
+import userSchema from '../../schema/validationUser/index.js';
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;
