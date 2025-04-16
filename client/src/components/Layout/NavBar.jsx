@@ -42,6 +42,10 @@ export const NavBar = ({
   },
 }) => {
   const navigate = useNavigate();
+  const handleLogOut = () => {
+    Cookies.remove('token', { path: '/' });
+    navigate('/login');
+};
 
   return (
     <section className="py-4">
@@ -112,6 +116,9 @@ export const NavBar = ({
                     </Button>
                     <Button onClick={() => navigate(auth.signup.url)}>
                       {auth.signup.title}
+                    </Button>
+                    <Button onClick={handleLogOut}>
+                      Logout
                     </Button>
                   </div>
                 </div>

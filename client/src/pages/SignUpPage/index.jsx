@@ -1,18 +1,46 @@
 import React from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { signUpValidationSchema } from "../../components/YupValidation/index";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import logoImage from "../../assets/logo.png";
-import { title } from "process";
-import { href } from "react-router-dom";
+import { userSignUpUser } from "@/hooks/useUserAuth/useSignUp";
+import { useNavigate } from "react-router-dom";
 
 export const SignUpPage = () => {
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(signUpValidationSchema),
+  });
+
+  const { addUsers, isUserLoading } = userSignUpUser();
+
+
+  const onSubmit = async (data) => {
+    const { confirmPassword, password, ...rest } = data;
+    const formData = { ...rest, password_hash: password };
+  
+    addUsers(formData, {
+      onSuccess: () => {
+        reset();
+      },
+    });
+  };  
+
   const heading = "Signup";
   const subheading = "Create a new account";
   const logo = {
     src: logoImage,
     alt: "logo",
     title: "FlowBoard",
+    url: "/", 
   };
   const signupText = "Sign up";
   const loginText = "Already have an account?";
@@ -36,17 +64,68 @@ export const SignUpPage = () => {
             <p className="text-sm text-muted-foreground text-center">{subheading}</p>
           )}
         </div>
-        <form className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <div className="flex gap-4">
-            <Input type="text" placeholder="First Name" required className="bg-white w-1/2" />
-            <Input type="text" placeholder="Last Name" required className="bg-white w-1/2" />
+            <div className="w-1/2">
+              <Input
+                type="text"
+                placeholder="First Name"
+                {...register("first_name")}
+                className="bg-white"
+              />
+              {errors.first_name && (
+                <p className="text-red-500 text-sm">{errors.first_name.message}</p>
+              )}
+            </div>
+            <div className="w-1/2">
+              <Input
+                type="text"
+                placeholder="Last Name"
+                {...register("last_name")}
+                className="bg-white"
+              />
+              {errors.last_name && (
+                <p className="text-red-500 text-sm">{errors.last_name.message}</p>
+              )}
+            </div>
           </div>
-          <Input type="Email" placeholder="Email" required className="bg-white" autoComplete="off" />
-          <Input type="password" placeholder="Password" required className="bg-white" autoComplete="new-password" />
-          <Input type="password" placeholder="Confirm Password" required className="bg-white" />
-
+          <div>
+            <Input
+              type="email"
+              placeholder="Email"
+              {...register("email")}
+              className="bg-white"
+              autoComplete="off"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              type="password"
+              placeholder="Password"
+              {...register("password")}
+              className="bg-white"
+              autoComplete="new-password"
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              {...register("confirmPassword")}
+              className="bg-white"
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+            )}
+          </div>
           <Button type="submit" className="w-full">
-            {signupText}
+          {isUserLoading ? "Signing Up..." : "Sign Up"}
           </Button>
         </form>
         <div className="mt-6 text-sm text-muted-foreground text-center">
