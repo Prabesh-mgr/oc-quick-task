@@ -1,14 +1,14 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../service/connection.js";
 
-const Board = sequelize.define("Board", {
+const Board = sequelize.define("board", {
   board_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-    autoIncrement: true,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     references: {
       model: "users",
@@ -21,8 +21,7 @@ const Board = sequelize.define("Board", {
     allowNull: false
   },
 }, {
-    tableName: "boards",
-    timestamps: true,
+  timestamps: true, 
 });
 
 export default Board;

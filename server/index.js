@@ -21,8 +21,7 @@ app.use(
 
 app.use('/', router)
 
-
-sequelize.sync()
+sequelize.sync({ alter: true })
   .then(() => console.log('Database synchronized'))
   .catch((err) => console.error("Database sync error:", err));
 
