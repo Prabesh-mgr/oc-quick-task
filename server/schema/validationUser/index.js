@@ -22,7 +22,7 @@ const userSchema = Joi.object({
             'string.email': "Invalid email format. Email should contain '@' and end with '.com', '.org', '.net', or '.edu'.",
             'any.required': "Email is required."
         }),
-    password_hash: Joi.string()
+    password: Joi.string()
         .pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
         .required()
         .messages({

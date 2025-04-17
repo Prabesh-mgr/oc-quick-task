@@ -6,19 +6,21 @@ dotenv.config();
 
 export const loginUser = async (req, res) => {
     try {
-        const { email, password_hash } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
             return res.status(401).json({ message: "Invalid email" });
         }
-        const isMatch = await bcrypt.compare(password_hash, user.password_hash);
+        const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) {
             return res.status(401).json({ message: "Wrong password" });
         }
 
         const token = jwt.sign({ 
-            userId: user.id
+            userId: user.user_id,
+            email: user.email,
+
          },
           process.env.JWT_SECRET,
            { expiresIn: '1h' });

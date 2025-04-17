@@ -25,7 +25,7 @@ export const SignUpPage = () => {
 
   const onSubmit = async (data) => {
     const { confirmPassword, password, ...rest } = data;
-    const formData = { ...rest, password_hash: password };
+    const formData = { ...rest, password };
   
     addUsers(formData, {
       onSuccess: () => {

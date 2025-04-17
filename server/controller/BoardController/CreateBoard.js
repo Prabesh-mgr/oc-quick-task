@@ -18,6 +18,7 @@ export const createBoard = async (req, res) => {
       return res.status(409).json({ message: "Board with this name already exists for the user." });
     }
     const newBoard = await Board.create({ user_id, board_name });
+    
 
     return res.status(201).json({
       message: "Board created successfully",
