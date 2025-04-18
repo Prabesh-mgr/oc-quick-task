@@ -13,5 +13,41 @@ export const getBoardColumn = async (req, res) => {
     } catch (error) {
         console.error("Error fetching column data:", error);
         res.status(500).json({ message: "Internal server error" });
+
+
+        {
+           { column: columnid,
+            columnName: columnName,
+            tasks:[
+                {
+                    taskId: task.id,
+                    taskName: task.task_name,
+                    taskDescription: task.task_description,
+                    taskStatus: task.status,
+                    taskPriority: task.priority,
+                },
+                {
+                    taskId: task.id,
+                    taskName: task.task_name,
+                    taskDescription: task.task_description,
+                    taskStatus: task.status,
+                    taskPriority: task.priority,
+                },
+            ]},
+            {
+                columnId: column.id,
+                columnName: column.column_name,
+                tasks:[
+                    {
+                        taskId: task.id,
+                        taskName: task.task_name,
+                        taskDescription: task.task_description,
+                        taskStatus: task.status,
+                        taskPriority: task.priority,
+                        
+                    },
+                ],
+            }
+        }
     }
  }
