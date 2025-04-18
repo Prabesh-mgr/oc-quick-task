@@ -1,8 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../service/connection.js";
-import { v4 as uuidv4 } from "uuid";
 
-const BoardColumn = sequelize.define("BoardColumn", {
+const BoardColumn = sequelize.define("boardColumn", {
   column_id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -26,6 +25,7 @@ const BoardColumn = sequelize.define("BoardColumn", {
     defaultValue: 0,
   },
 }, {
+  tableName: "boardColumns",
   timestamps: true,
 });
 

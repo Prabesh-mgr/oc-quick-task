@@ -1,4 +1,5 @@
 import Board from "../../models/Boards.js";
+import BoardColumn from "../../models/Columns.js";
 
 export const createBoard = async (req, res) => {
   try {
@@ -10,10 +11,7 @@ export const createBoard = async (req, res) => {
     }
 
     const existingBoard = await Board.findOne({
-      where: {
-        user_id,
-        board_name,
-      },
+      where: { user_id, board_name },
     });
 
     if (existingBoard) {
@@ -21,14 +19,26 @@ export const createBoard = async (req, res) => {
         message: "Board with this name already exists for the user.",
       });
     }
-
     const newBoard = await Board.create({
       user_id,
       board_name,
     });
 
+    const defaultColumns = [
+      { column_name: "To Do", column_order: 1 },
+      { column_name: "On Progress", column_order: 2 },
+      { column_name: "Completed", column_order: 3 },
+    ];
+
+    const columnsToCreate = defaultColumns.map((col) => ({
+      ...col,
+      board_id: newBoard.board_id, 
+    }));
+
+    await BoardColumn.bulkCreate(columnsToCreate);
+
     return res.status(201).json({
-      message: "Board created successfully",
+      message: "Board and default columns created successfully",
       board: newBoard,
     });
   } catch (error) {

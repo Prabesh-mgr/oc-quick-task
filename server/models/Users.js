@@ -1,6 +1,5 @@
 import sequelize from "../service/connection.js";
 import { DataTypes } from "sequelize";
-import { v4 as uuidv4 } from "uuid";
 
 const User = sequelize.define("users", {
     user_id: {
