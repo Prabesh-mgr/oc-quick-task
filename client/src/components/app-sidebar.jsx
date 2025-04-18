@@ -53,18 +53,10 @@ const data = {
       icon: () => <img src={board} alt="User" className="w-4 h-4 rounded-sm" />,
       items: [
         {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+          title: "Create Board"
+        }
+      ]
+
     },
     {
       title: "Documentation",
