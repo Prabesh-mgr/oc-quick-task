@@ -1,7 +1,7 @@
 import express from 'express';
 import { signUpUser } from '../controller/AuthController/SignUpUser.js';
 import { loginUser } from '../controller/AuthController/LoginUser.js';
-import { getAllUserData, getUserData } from '../controller/GetUserData.js';
+import { getUserData } from '../controller/GetUserData.js';
 import { createBoard } from '../controller/BoardController/CreateBoard.js';
 import {  getBoardByUserId } from '../controller/BoardController/GetBoard.js';
 import { deleteBoard } from '../controller/BoardController/DeleteBoard.js';
@@ -27,7 +27,6 @@ router.route('/board/column/:column_id')
   .patch(verifyToken, updateBoardColumn)
   .delete(verifyToken, deleteBoardColumn);
 
-router.get('/userData/:user_id', getUserData);
-router.get('/userData', getAllUserData);
+router.get('/userData/:user_id',verifyToken, getUserData);
 
 export default router;

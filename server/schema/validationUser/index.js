@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-const userSchema = Joi.object({
+export const userSchema = Joi.object({
     first_name: Joi.string()
         .pattern(/^[A-Za-z\s]+$/)
         .required()
@@ -30,5 +30,17 @@ const userSchema = Joi.object({
             'any.required': "Password is required."
         })
 });
-
-export default userSchema;
+export const loginSchema = Joi.object({
+    email: Joi.string()
+        .email({ tlds: { allow: ['com', 'org', 'net', 'edu'] } })
+        .required()
+        .messages({
+            'string.email': "Invalid email format.",
+            'any.required': "Email is required."
+        }),
+    password: Joi.string()
+        .required()
+        .messages({
+            'any.required': "Password is required."
+        })
+});
