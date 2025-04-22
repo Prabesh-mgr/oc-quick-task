@@ -1,28 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
-import { useBoard } from "../../../hooks/useBoard/CreateBoard/index.js"
+import { createBoards } from "../../../hooks/useBoard/CreateBoard/index.js";
 
-export function CardWithForm() {
+export function CardWithForm({ onSuccess }) {
   const [boardName, setBoardName] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { createBoard, isLoading: isCreatingBoard } = useBoard();
+  const { createBoard, isLoading: isCreatingBoard } = createBoards();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!boardName.trim()) {
       setError("Board name is required");
       return;
     }
-
+    
     try {
       const result = await createBoard({ boardName: boardName });
-
       document.dispatchEvent(new CustomEvent("closeboardmodal"));
-
-
-      navigate(`/boards/${result.board?.boardId}`);
+      
+      if (onSuccess) {
+        onSuccess(result.board);
+      }
     } catch (err) {
       if (err.response?.status === 409) {
         setError("A board with this name already exists");

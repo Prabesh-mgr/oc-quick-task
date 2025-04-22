@@ -1,6 +1,6 @@
 import { axiosConfig } from "@/config/axiosConfig.js";
 
-export const getColumnsAndTasks = async (boardId) => {
+export const getBoardColumns = async (boardId) => {
     try {
       const response = await axiosConfig.get(`/board/column/${boardId}`);
       return response.data;

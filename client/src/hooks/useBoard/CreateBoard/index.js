@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createBoardRequest } from "./request.js";
 
-export const useBoard = () => {
+export const createBoards = () => {
   const queryClient = useQueryClient();
   
   const { mutateAsync: createBoard, isLoading: isCreatingBoard } = useMutation({

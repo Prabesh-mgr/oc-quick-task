@@ -1,17 +1,12 @@
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { getColumnsAndTasks } from "./request";
+import { getBoardColumns } from "./request";
 
-export const useColumns = (boardId) => {
+export const useBoardColumns  = (boardId) => {
     const queryClient = useQueryClient();
 
-    const {
-        data: columnsData,
-        isLoading: isLoadingColumns,
-        error: columnsError,
-        refetch: refetchColumns
-    } = useQuery({
+    const { data: columnsData, isLoading: isLoadingColumns,  error: columnsError,  refetch: refetchColumns} = useQuery({
         queryKey: ["columns", boardId],
-        queryFn: () => getColumnsAndTasks(boardId),
+        queryFn: () => getBoardColumns(boardId),
         enabled: !!boardId,
         onSuccess: (data) => {
             console.log("Columns data fetched successfully:", data);

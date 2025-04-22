@@ -1,26 +1,21 @@
-"use client"
-
-import React, { useEffect, useState } from "react"
-import {
-  BookOpen,
-  Settings2,
-} from "lucide-react"
-
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+"use client";
+import React, { useEffect, useMemo, useState } from "react";
+import { BookOpen, Settings2, AlertCircle, Loader2, RefreshCcw } from "lucide-react";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-
-import logo from "../assets/logo.png"
-import user from "../assets/user.png"
-import board from "../assets/board.png"
-import { CardWithForm } from "./PopUp/Card_Board"
+} from "@/components/ui/sidebar";
+import logo from "../assets/logo.png";
+import user from "../assets/user.png";
+import board from "../assets/board.png";
+import { CardWithForm } from "./PopUp/Card_Board";
+import { getUserBoards } from "../hooks/useBoard/GetBoard/index";
 
 const data = {
   user: {
@@ -33,7 +28,7 @@ const data = {
       name: "Acme Inc",
       logo: logo,
       plan: "Enterprise",
-    }
+    },
   ],
   navMain: [
     {
@@ -52,12 +47,7 @@ const data = {
       title: "Boards",
       url: "#",
       icon: () => <img src={board} alt="Board" className="w-4 h-4 rounded-sm" />,
-      items: [
-        {
-          title: "Create Board",
-          url: "#",
-        },
-      ]
+      items: [],
     },
     {
       title: "Documentation",
@@ -82,40 +72,94 @@ const data = {
       ],
     },
   ],
-}
+};
 
-export function AppSidebar(props) {
-  const [showPopup, setShowPopup] = useState(false)
+export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) {
+  const [showPopup, setShowPopup] = useState(false);
+  const { boards, isLoadingBoards, boardsError, refetchBoards, refreshBoards } = getUserBoards();
 
-  const handleCreateBoardClick = () => {
-    setShowPopup(true)
-  }
+  const handleCreateBoardClick = () => setShowPopup(true);
+
   useEffect(() => {
-    const handleCloseModal = () => {
-      setShowPopup(false);
-    };
+    refetchBoards();
     
-    document.addEventListener('closeboardmodal', handleCloseModal);
-    return () => {
-      document.removeEventListener('closeboardmodal', handleCloseModal);
-    };
-  }, []);
+    const handleCloseModal = () => setShowPopup(false);
+    document.addEventListener("closeboardmodal", handleCloseModal);
+    return () => document.removeEventListener("closeboardmodal", handleCloseModal);
+  }, [refetchBoards]);
 
-  const updatedNavMain = data.navMain.map((item) => {
-    if (item.title === "Boards") {
-      return {
-        ...item,
-        items: item.items.map((subItem) => ({
-          ...subItem,
-          onClick: (e) => {
-            e.preventDefault()
-            handleCreateBoardClick()
-          }
-        }))
-      }
+  const handleBoardCreated = (newBoard) => {
+    refreshBoards();
+    setShowPopup(false);
+    
+    if (onCreateBoardSuccess) {
+      onCreateBoardSuccess(newBoard);
     }
-    return item
-  })
+  };
+
+  const updatedNavMain = useMemo(() => {
+    return data.navMain.map((item) => {
+      if (item.title === "Boards") {
+        return {
+          ...item,
+          items: [
+            {
+              title: "Create Board",
+              url: "#",
+              onClick: (e) => {
+                e.preventDefault();
+                handleCreateBoardClick();
+              },
+            },
+            {
+              title: "Refresh Boards",
+              url: "#",
+              icon: () => <RefreshCcw className="w-4 h-4" />,
+              onClick: (e) => {
+                e.preventDefault();
+                refreshBoards();
+              }
+            },
+            ...(isLoadingBoards 
+              ? [{ 
+                  title: "Loading boards...", 
+                  url: "#",
+                  icon: () => <Loader2 className="w-4 h-4 animate-spin" />
+                }] 
+              : []),
+       
+            ...(boardsError 
+              ? [{ 
+                  title: "Error loading boards", 
+                  url: "#",
+                  icon: () => <AlertCircle className="w-4 h-4 text-red-500" />,
+                  onClick: (e) => {
+                    e.preventDefault();
+                    refreshBoards();
+                  }
+                }] 
+              : []),
+
+            ...(!isLoadingBoards && !boardsError
+              ? (Array.isArray(boards) && boards.length > 0
+                  ? boards.map((board) => ({
+                      title: board.boardName || board.name || "Untitled Board",
+                      url: `#`,
+                      onClick: (e) => {
+                        e.preventDefault();
+                        if (onBoardSelected) {
+                          onBoardSelected(board);
+                        }
+                      },
+                    }))
+                  : [{ title: "No boards yet", url: "#" }])
+              : []),
+          ],
+        };
+      }
+      return item;
+    });
+  }, [boards, isLoadingBoards, boardsError, refreshBoards, onBoardSelected]);
 
   return (
     <>
@@ -131,15 +175,13 @@ export function AppSidebar(props) {
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-
       {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-4">
-            <CardWithForm />
-           
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-4 shadow-xl">
+            <CardWithForm onSuccess={handleBoardCreated} />
           </div>
         </div>
       )}
     </>
-  )
+  );
 }
