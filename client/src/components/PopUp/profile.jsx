@@ -25,24 +25,24 @@ import {
           
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="first_name" className="text-right">
+              <Label htmlFor="firstName" className="text-right">
                 First Name
               </Label>
               <Input
-                id="first_name"
-                value={userData.first_name || ""}
+                id="firstName"
+                value={userData.firstName || ""}
                 readOnly
                 className="col-span-3"
               />
             </div>
             
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="last_name" className="text-right">
+              <Label htmlFor="lastName" className="text-right">
                 Last Name
               </Label>
               <Input
-                id="last_name"
-                value={userData.last_name || ""}
+                id="lastName"
+                value={userData.lastName || ""}
                 readOnly
                 className="col-span-3"
               />

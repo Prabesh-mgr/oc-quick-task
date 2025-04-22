@@ -3,7 +3,7 @@ import User from "../models/Users.js";
 export const getAllUsers = async (req, res) => {
   try {
       const users = await User.findAll({
-          attributes: { exclude: ['password_hash'] } 
+          attributes: { exclude: ['passwordHash'] } 
       });
 
       if (!users || users.length === 0) {
@@ -27,7 +27,7 @@ export const getUserData = async (req, res) => {
       }
 
       const userData = user.toJSON(); 
-      delete userData.password_hash;
+      delete userData.passwordHash;
 
       res.json(userData);
   } catch (error) {

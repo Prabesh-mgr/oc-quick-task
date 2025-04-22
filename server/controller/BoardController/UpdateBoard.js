@@ -2,18 +2,18 @@ import Board from "../../models/Boards.js";
 
 export const updateBoard = async (req, res) => {
   try {
-    const boardIdToUpdate = req.params.board_id;
-    const { board_name } = req.body;
+    const boardIdToUpdate = req.params.boardId;
+    const { boardName } = req.body;
     const userId = req.user.userId; 
 
-    if (!board_name) {
+    if (!boardName) {
       return res.status(400).json({ error: "Board name is required" });
     }
 
     const board = await Board.findOne({
       where: {
-        board_id: boardIdToUpdate,
-        user_id: userId,
+        boardId: boardIdToUpdate,
+        userId: userId,
       },
     });
 
@@ -21,13 +21,13 @@ export const updateBoard = async (req, res) => {
       return res.status(404).json({ error: "Board not found or not authorized" });
     }
 
-    if (board.board_name === board_name) {
+    if (board.boardName === boardName) {
       return res.status(400).json({
         error: "New board name must be different from the current name",
       });
     }
 
-    await board.update({ board_name });
+    await board.update({ boardName });
 
     return res.status(200).json({
       message: "Board updated successfully",

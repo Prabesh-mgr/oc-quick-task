@@ -14,27 +14,28 @@ import { createBoardColumn } from '../controller/BoardColumns/CreateColumn.js';
 import { createTasks } from '../controller/TaskController/CreateTasks.js';
 import { deleteTasks } from '../controller/TaskController/DeleteTasks.js';
 import { updateTasks } from '../controller/TaskController/UpdateTasks.js';
+import { getTaskDetails } from '../controller/TaskController/GetTaskDetails.js';
 
 const router = express.Router();
 router.post('/signup', signUpUser);
 router.post('/login', loginUser);
 
 router.post('/board',verifyToken, createBoard);
-router.get('/allboard/:user_id',verifyToken, getBoardByUserId );
-router.delete('/board/:board_id',verifyToken, deleteBoard)
-router.patch('/board/:board_id',verifyToken, updateBoard)
+router.get('/user/boards',verifyToken, getBoardByUserId );
+router.delete('/board/:boardId',verifyToken, deleteBoard)
+router.patch('/board/:boardId',verifyToken, updateBoard)
 
 router.post('/board/column/',verifyToken, createBoardColumn );
-router.get('/board/column/:board_id',verifyToken, getBoardColumnsAndTasks);
-router.route('/board/column/:column_id')
+router.get('/board/column/:boardId',verifyToken, getBoardColumnsAndTasks);
+router.route('/board/column/:columnId')
   .patch(verifyToken, updateBoardColumn)
   .delete(verifyToken, deleteBoardColumn);
 
-router.get('/userData/:user_id',verifyToken, getUserData);
+router.get('/userData/:userId',verifyToken, getUserData);
 router.get('/userData/', getAllUsers);
 
+router.get('/board/column/task/:taskId',verifyToken, getTaskDetails);
 router.post('/board/column/task',verifyToken, createTasks);
-router.delete('/board/column/task/:task_id',verifyToken, deleteTasks);
-router.patch('/board/column/task/:task_id',verifyToken, updateTasks);
-
+router.delete('/board/column/task/:taskId',verifyToken, deleteTasks);
+router.patch('/board/column/task/:taskId',verifyToken, updateTasks);
 export default router;

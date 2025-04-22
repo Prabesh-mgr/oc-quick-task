@@ -70,22 +70,22 @@ export const SignUpPage = () => {
               <Input
                 type="text"
                 placeholder="First Name"
-                {...register("first_name")}
+                {...register("firstName")}
                 className="bg-white"
               />
-              {errors.first_name && (
-                <p className="text-red-500 text-sm">{errors.first_name.message}</p>
+              {errors.firstName && (
+                <p className="text-red-500 text-sm">{errors.firstName.message}</p>
               )}
             </div>
             <div className="w-1/2">
               <Input
                 type="text"
                 placeholder="Last Name"
-                {...register("last_name")}
+                {...register("lastName")}
                 className="bg-white"
               />
-              {errors.last_name && (
-                <p className="text-red-500 text-sm">{errors.last_name.message}</p>
+              {errors.lastName && (
+                <p className="text-red-500 text-sm">{errors.lastName.message}</p>
               )}
             </div>
           </div>

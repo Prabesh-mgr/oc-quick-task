@@ -6,14 +6,14 @@ export const getBoardByUserId = async (req, res) => {
     const userId = req.user.userId;
 
     const boards = await Board.findAll({
-      where: { user_id: userId },
+      where: { userId: userId },
     });
 
     if (boards.length === 0) {
       return res.status(404).json({ error: "No boards found for this user" });
     }
    res.status(200).json({ 
-        message: `Boards fetched successfully of user_id: ${userId}`,
+        message: `Boards fetched successfully of userid: ${userId}`,
         board: boards});
   } catch (error) {
     console.error("Error fetching board data:", error);

@@ -6,24 +6,32 @@ import Task from "./Tasks.js";
 
 
 User.hasMany(Board, {
-  foreignKey: "user_id",
+  foreignKey: "userId",
   onDelete: "CASCADE",
 });
-Board.belongsTo(User, { foreignKey: "user_id" });
+Board.belongsTo(User, { foreignKey: "userId" });
 
 Board.hasMany(BoardColumn, {
-  foreignKey: "board_id",
+  foreignKey: "boardId",
   onDelete: "CASCADE",
 });
-BoardColumn.belongsTo(Board, { foreignKey: "board_id" });
+BoardColumn.belongsTo(Board, { foreignKey: "boardId" });
+User.hasMany(BoardColumn, { foreignKey: "userId", onDelete: "CASCADE" });
+BoardColumn.belongsTo(User, { foreignKey: "userId" });
+
+Board.hasMany(Task, { foreignKey: "boardId", onDelete: "CASCADE" });
+Task.belongsTo(Board, { foreignKey: "boardId" });
+
+User.hasMany(Task, { foreignKey: "userId", onDelete: "CASCADE" });
+Task.belongsTo(User, { foreignKey: "userId" });
 
 BoardColumn.hasMany(Task, {
-  foreignKey: "column_id",
+  foreignKey: "columnId",
   onDelete: "CASCADE",
   as: 'tasks',
 });
 Task.belongsTo(BoardColumn, {
-  foreignKey: "column_id",
+  foreignKey: "columnId",
   onDelete: "CASCADE",
 });
 

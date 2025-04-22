@@ -33,11 +33,10 @@ export const LoginPage = ({
 
   const onSubmit = (data) => {
     loginUser(
-      { email: data.email, password: data.password },
-      {
-        onSuccess: () => navigate("/home"),
-      }
+      { 
+        email: data.email, password: data.password },
     );
+  
   };
 
   return (

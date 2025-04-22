@@ -17,13 +17,13 @@ export const loginUser = async (req, res) => {
         if (!user) {
             return res.status(401).json({ message: "Invalid email" });
         }
-        const isMatch = await bcrypt.compare(password, user.password_hash);
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch) {
             return res.status(401).json({ message: "Wrong password" });
         }
 
         const token = jwt.sign({
-            userId: user.user_id,
+            userId: user.userId,
             email: user.email,
 
         },
@@ -36,12 +36,12 @@ export const loginUser = async (req, res) => {
             sameSite: 'Strict'
         });
         return res.json({
-            message: `Login successful for ${user.first_name} ${user.last_name}`,
+            message: `Login successful for ${user.firstName} ${user.lastName}`,
             user: {
-                id: user.user_id,
+                id: user.userId,
                 email: user.email,
-                first_name: user.first_name,
-                last_name: user.last_name
+                firstName: user.firstName,
+                lastName: user.lastName
             },
             token
         });

@@ -2,13 +2,13 @@ import Task from "../../models/Tasks.js";
 
 export const deleteTasks = async (req, res) => {
   try {
-    const { task_id } = req.params;
+    const { taskId } = req.params;
 
-    if (!task_id) {
+    if (!taskId) {
       return res.status(400).json({ message: "Task ID is required" });
     }
 
-    const task = await Task.findByPk(task_id);
+    const task = await Task.findByPk(taskId);
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });

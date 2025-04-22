@@ -28,7 +28,7 @@ export const EditDialog = ({ isOpen, onOpenChange, userData = {} }) => {
             </Label>
             <Input 
               id="firstname" 
-              defaultValue={userData.first_name || ""} 
+              defaultValue={userData.firstName || ""} 
               className="col-span-3" 
             />
           </div>
@@ -38,7 +38,7 @@ export const EditDialog = ({ isOpen, onOpenChange, userData = {} }) => {
             </Label>
             <Input 
               id="lastname" 
-              defaultValue={userData.last_name || ""} 
+              defaultValue={userData.lastName || ""} 
               className="col-span-3" 
             />
           </div>

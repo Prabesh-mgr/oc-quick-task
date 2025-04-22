@@ -14,9 +14,9 @@ export const signUpUser = async (req, res) => {
             return res.status(400).json({ message: error.details[0].message });
         }
 
-        const { first_name, last_name, email, password} = req.body;
+        const { firstName, lastName, email, password} = req.body;
 
-        if (!first_name || !last_name || !email || !password) {
+        if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -27,14 +27,14 @@ export const signUpUser = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
-            first_name,
-            last_name,
+            firstName,
+            lastName,
             email,
-            password_hash: hashedPassword,
+            passwordHash: hashedPassword,
         });
 
         const token = jwt.sign(
-            { user_id: newUser.user_id, email: newUser.email },
+            { userId: newUser.userId, email: newUser.email },
             SECRET_KEY,
             { expiresIn: '1h' }
         );

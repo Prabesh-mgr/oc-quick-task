@@ -2,11 +2,11 @@ import BoardColumn from "../../models/Columns.js";
 import Board from "../../models/Boards.js";
 export const deleteBoardColumn = async (req, res) => {
     try {
-        const columnIdToDelete = req.params.column_id;
+        const columnIdToDelete = req.params.columnId;
         const userId = req.user.userId;
 
         const column = await BoardColumn.findOne({
-            where: { column_id: columnIdToDelete },
+            where: { columnId: columnIdToDelete },
         });
 
         if (!column) {
@@ -15,8 +15,8 @@ export const deleteBoardColumn = async (req, res) => {
 
         const board = await Board.findOne({
             where: {
-                board_id: column.board_id,
-                user_id: userId,
+                boardId: column.boardId,
+                userId: userId,
             },
         });
 

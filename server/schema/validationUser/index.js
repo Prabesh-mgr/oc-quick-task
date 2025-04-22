@@ -1,14 +1,14 @@
 import Joi from 'joi';
 
 export const userSchema = Joi.object({
-    first_name: Joi.string()
+    firstName: Joi.string()
         .pattern(/^[A-Za-z\s]+$/)
         .required()
         .messages({
             'string.pattern.base': "First Name should only contain letters (A-Z, a-z) and spaces.",
             'any.required': "First Name is required."
         }),
-    last_name: Joi.string()
+    lastName: Joi.string()
         .pattern(/^[A-Za-z\s]+$/)
         .required() 
         .messages({

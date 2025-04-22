@@ -2,8 +2,8 @@ import BoardColumn from "../../models/Columns.js";
 
 export const updateBoardColumn = async (req, res) => {
   try {
-    const columnId = req.params.column_id; 
-    const { column_name } = req.body;
+    const columnId = req.params.columnId; 
+    const { columnName } = req.body;
 
     const column = await BoardColumn.findByPk(columnId);
 
@@ -11,11 +11,11 @@ export const updateBoardColumn = async (req, res) => {
       return res.status(404).json({ error: 'Column not found' });
     }
 
-    if (column.column_name === column_name) {
+    if (column.columnName === columnName) {
       return res.status(400).json({ error: 'New column name must be different from the current one' });
     }
 
-    column.column_name = column_name;
+    column.columnName = columnName;
     await column.save();
 
     res.status(200).json({

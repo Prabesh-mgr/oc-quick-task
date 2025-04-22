@@ -2,13 +2,13 @@ import Board from "../../models/Boards.js";
 
 export const deleteBoard = async (req, res) => {
   try {
-    const boardIdToDelete = req.params.board_id; 
+    const boardIdToDelete = req.params.boardId; 
     const userId = req.user.userId; 
 
     const board = await Board.findOne({
       where: {
-        board_id: boardIdToDelete,
-        user_id: userId,
+        boardId: boardIdToDelete,
+        userId: userId,
       },
     });
 

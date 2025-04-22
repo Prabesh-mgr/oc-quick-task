@@ -1,12 +1,12 @@
 import * as yup from 'yup';
 
 export const signUpValidationSchema = yup.object().shape({
-  first_name: yup
+  firstName: yup
     .string()
     .matches(/^[A-Za-z\s]+$/, 'First name must contain only letters')
     .required('First name is required'),
   
-  last_name: yup
+  lastName: yup
     .string()
     .matches(/^[A-Za-z\s]+$/, 'Last name must contain only letters')
     .required('Last name is required'),

@@ -1,11 +1,11 @@
-import {requestUserData} from "./response.js";
+import {requestUserData} from "./request.js";
 import {useQuery} from "@tanstack/react-query";
 
-export const getUserData = (user_id) => {
+export const getUserData = (userId) => {
     const {data: userData, isLoading: isUserLoading} = useQuery({
-        queryKey: ['userData', user_id],
-        queryFn: () => requestUserData(user_id),
-        enabled: !!user_id,
+        queryKey: ['userData', userId],
+        queryFn: () => requestUserData(userId),
+        enabled: !!userId,
     })
     return {
         userData,

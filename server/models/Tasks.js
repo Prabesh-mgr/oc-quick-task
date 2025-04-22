@@ -2,26 +2,30 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../service/connection.js';
 
 const Task = sequelize.define('task', {
-    task_id: {
+    taskId: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    task_name: {
+    userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+    taskName: {
         type: DataTypes.STRING,
         allowNull: false,
     },
     description: {
         type: DataTypes.TEXT,
     },
-    due_date: {
+    dueDate: {
         type: DataTypes.DATEONLY,
     },
-    column_id: {
+    columnId: {
         type: DataTypes.UUID,
         allowNull: true,
     },
-    assigned_to: {
+    assignedTo: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         allowNull: true,
     },

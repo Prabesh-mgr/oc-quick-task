@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { requestSignUp } from './response';
+import { requestSignUp } from './request';
 
 export const userSignUpUser = () => {
     const queryClient = useQueryClient();

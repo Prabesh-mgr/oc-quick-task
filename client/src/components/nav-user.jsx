@@ -33,8 +33,8 @@ export function NavUser() {
   const navigate = useNavigate();
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
   const [userData, setUserData] = useState({
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     avatar: ""
   });
@@ -58,12 +58,12 @@ export function NavUser() {
   };
 
   const getInitials = () => {
-    const firstInitial = userData.first_name ? userData.first_name[0] : '';
-    const lastInitial = userData.last_name ? userData.last_name[0] : '';
+    const firstInitial = userData.firstName ? userData.firstName[0] : '';
+    const lastInitial = userData.lastName ? userData.lastName[0] : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
   };
 
-  const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
+  const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
 
   return (
     <>

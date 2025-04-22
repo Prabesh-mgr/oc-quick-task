@@ -2,21 +2,21 @@ import { DataTypes } from "sequelize";
 import sequelize from "../service/connection.js";
 
 const Board = sequelize.define("board", {
-  board_id: {
+  boardId: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  user_id: {
+  userId: {
     type: DataTypes.UUID,
     allowNull: false,
     references: {
       model: "users",
-      key: "user_id"
+      key: "userId"
     },
     onDelete: "CASCADE"
   },
-  board_name: {
+  boardName: {
     type: DataTypes.STRING(100),
     allowNull: false
   },

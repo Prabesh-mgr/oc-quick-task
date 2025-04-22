@@ -2,33 +2,42 @@ import { BoardColumn, Task } from "../../models/index.js";
 
 export const getBoardColumnsAndTasks = async (req, res) => {
   try {
-    const boardId = req.params.board_id;
+    const boardId = req.params.boardId;
+    const loggedInUserId = req.user.userId;
+
+    if (!loggedInUserId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
 
     const columns = await BoardColumn.findAll({
-      where: { board_id: boardId },
+      where: {
+        boardId: boardId,
+        userId: loggedInUserId ,
+      },
       include: [
         {
           model: Task,
-          as: 'tasks', 
-          attributes: ['task_id', 'task_name', 'description', 'due_date', 'column_id', 'assigned_to', 'completed'],
+          as: 'tasks',
+          attributes: ['taskId', 'taskName', 'description', 'dueDate', 'columnId', 'assignedTo', 'completed'],
+          where: { userId: loggedInUserId },
+          required: false 
         }
       ]
     });
 
     if (!columns || columns.length === 0) {
-      return res.status(404).json({ error: 'No columns found for this board' });
+      return res.status(404).json({ error: 'No columns found for this board or user' });
     }
 
     const result = columns.map(column => ({
-      columnId: column.column_id,
-      columnName: column.column_name,
+      columnId: column.columnId,
+      columnName: column.columnName,
       tasks: column.tasks.map(task => ({
-        taskId: task.task_id,
-        taskName: task.task_name,
-        taskDescription: task.description,
-        taskStatus: task.due_date,
-        taskAssignedTo: task.assigned_to,
-        taskPriority: task.completed,
+        taskId: task.taskId,
+        taskName: task.taskName,
+        taskDueDate: task.dueDate,
+        taskAssignedTo: task.assignedTo,
+        taskCompleted: task.completed,
       }))
     }));
 

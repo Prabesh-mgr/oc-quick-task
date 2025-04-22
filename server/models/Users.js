@@ -2,16 +2,16 @@ import sequelize from "../service/connection.js";
 import { DataTypes } from "sequelize";
 
 const User = sequelize.define("users", {
-    user_id: {
+    userId: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    first_name: {
+    firstName: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    last_name: {
+    lastName: {
         type: DataTypes.STRING,
         allowNull: false, 
     },
@@ -23,7 +23,7 @@ const User = sequelize.define("users", {
             isEmail: true,
         },
     },
-    password_hash: {
+    passwordHash: {
         type: DataTypes.STRING,
         allowNull: false,
     },

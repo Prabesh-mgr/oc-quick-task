@@ -1,8 +1,8 @@
 import { axiosConfig } from "../../config/axiosConfig.js";
 
-export const requestUserData = async (user_id) => {
+export const requestUserData = async (userId) => {
   try {
-    const response = await axiosConfig.get(`/userData/${user_id}`);
+    const response = await axiosConfig.get(`/userData/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
