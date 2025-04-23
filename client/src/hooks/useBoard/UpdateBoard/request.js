@@ -1,6 +1,6 @@
 import { axiosConfig } from "@/config/axiosConfig.js";
 
-export const updateBoard = async (boardId, boardData) => {
+export const requestUpdateBoard = async (boardId, boardData) => {
     try {
       const response = await axiosConfig.patch(`/board/${boardId}`, boardData);
       return response.data;

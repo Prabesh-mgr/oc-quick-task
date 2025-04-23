@@ -4,7 +4,7 @@ import { createBoardRequest } from "./request.js";
 export const createBoards = () => {
   const queryClient = useQueryClient();
   
-  const { mutateAsync: createBoard, isLoading: isCreatingBoard } = useMutation({
+  const { mutate: createBoard, isLoading: isCreatingBoard } = useMutation({
     mutationFn: (boardData) => createBoardRequest(boardData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] }); 

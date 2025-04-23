@@ -35,7 +35,6 @@ const data = {
       title: "For you",
       url: "#",
       icon: () => <img src={user} alt="User" className="w-4 h-4 rounded-sm" />,
-      isActive: true,
       items: [
         {
           title: "Account",
@@ -48,18 +47,10 @@ const data = {
       url: "#",
       icon: () => <img src={board} alt="Board" className="w-4 h-4 rounded-sm" />,
       items: [],
+      // isActive: true,
+
     },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        { title: "Introduction", url: "#" },
-        { title: "Get Started", url: "#" },
-        { title: "Tutorials", url: "#" },
-        { title: "Changelog", url: "#" },
-      ],
-    },
+    
     {
       title: "Settings",
       url: "#",
@@ -82,7 +73,7 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
 
   useEffect(() => {
     refetchBoards();
-    
+
     const handleCloseModal = () => setShowPopup(false);
     document.addEventListener("closeboardmodal", handleCloseModal);
     return () => document.removeEventListener("closeboardmodal", handleCloseModal);
@@ -91,10 +82,22 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
   const handleBoardCreated = (newBoard) => {
     refreshBoards();
     setShowPopup(false);
-    
+
     if (onCreateBoardSuccess) {
       onCreateBoardSuccess(newBoard);
     }
+  };
+
+  const renderCustomTitle = (title) => {
+    if (title === "Create Board") {
+      return (
+        <div className="flex items-center">
+          <span>Create Board</span>
+          <span className="ml-1 text-blue-500 font-bold">+</span>
+        </div>
+      );
+    }
+    return title;
   };
 
   const updatedNavMain = useMemo(() => {
@@ -104,8 +107,9 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
           ...item,
           items: [
             {
-              title: "Create Board",
+              title: "Create Board +",
               url: "#",
+              renderTitle: () => renderCustomTitle("Create Board"),
               onClick: (e) => {
                 e.preventDefault();
                 handleCreateBoardClick();
@@ -118,41 +122,49 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
               onClick: (e) => {
                 e.preventDefault();
                 refreshBoards();
-              }
+              },
+              className: "text-gray-500 text-sm mb-2"
             },
-            ...(isLoadingBoards 
-              ? [{ 
-                  title: "Loading boards...", 
-                  url: "#",
-                  icon: () => <Loader2 className="w-4 h-4 animate-spin" />
-                }] 
+            ...(isLoadingBoards
+              ? [{
+                title: "Loading boards...",
+                url: "#",
+                icon: () => <Loader2 className="w-4 h-4 animate-spin" />,
+                className: "text-gray-500 italic text-sm"
+              }]
               : []),
-       
-            ...(boardsError 
-              ? [{ 
-                  title: "Error loading boards", 
-                  url: "#",
-                  icon: () => <AlertCircle className="w-4 h-4 text-red-500" />,
-                  onClick: (e) => {
-                    e.preventDefault();
-                    refreshBoards();
-                  }
-                }] 
+
+            ...(boardsError
+              ? [{
+                title: "Error loading boards",
+                url: "#",
+                icon: () => <AlertCircle className="w-4 h-4 text-red-500" />,
+                onClick: (e) => {
+                  e.preventDefault();
+                  refreshBoards();
+                },
+                className: "text-red-500 text-sm"
+              }]
               : []),
 
             ...(!isLoadingBoards && !boardsError
               ? (Array.isArray(boards) && boards.length > 0
-                  ? boards.map((board) => ({
-                      title: board.boardName || board.name || "Untitled Board",
-                      url: `#`,
-                      onClick: (e) => {
-                        e.preventDefault();
-                        if (onBoardSelected) {
-                          onBoardSelected(board);
-                        }
-                      },
-                    }))
-                  : [{ title: "No boards yet", url: "#" }])
+                ? boards.map((board) => ({
+                  title: board.boardName || board.name || "Untitled Board",
+                  url: `#`,
+                  onClick: (e) => {
+                    e.preventDefault();
+                    if (onBoardSelected) {
+                      onBoardSelected(board);
+                    }
+                  },
+                  className: "pl-1 hover:bg-gray-100 text-gray-700"
+                }))
+                : [{
+                  title: "No boards yet",
+                  url: "#",
+                  className: "text-gray-400 italic text-sm"
+                }])
               : []),
           ],
         };
@@ -176,8 +188,8 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
         <SidebarRail />
       </Sidebar>
       {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-4 shadow-xl">
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6 md:px-0">
+          <div className="pointer-events-auto w-full max-w-md p-4">
             <CardWithForm onSuccess={handleBoardCreated} />
           </div>
         </div>

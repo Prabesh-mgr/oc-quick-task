@@ -1,6 +1,6 @@
 import { axiosConfig } from "@/config/axiosConfig.js";
 
-export const deleteBoard = async (boardId) => {
+export const requestdeleteBoard = async (boardId) => {
     try {
       const response = await axiosConfig.delete(`/board/${boardId}`);
       return response.data;

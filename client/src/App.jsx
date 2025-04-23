@@ -9,7 +9,6 @@ import { AuthLayout } from './components/Layout/MainLayout';
 import { LandingPage } from './pages/LandingPage';
 import { PublicRoutes } from './components/PublicRoutes';
 import { ProtectedRoutes } from './components/ProtectedRoutes';
-import { BoardPage } from './pages/BoardPage';
 
 const router = createBrowserRouter([
   {
@@ -33,7 +32,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoutes />,
     children: [
       { path: "/home", element: <HomePage /> },
-      { path: "/boards/:boardId", element: <BoardPage /> },
+
     ],
   }
 ]);

@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteBoard } from "./request.js";
+import { requestdeleteBoard } from "./request.js";
 
-export const useBoard = () => {
+export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
   
-  const { mutateAsync: deleteBoard, isLoading } = useMutation({
-    mutationFn: deleteBoard,
+  const { mutate: deleteBoard, isLoading: isDeleteBookLoading } = useMutation({
+    mutationFn: requestdeleteBoard,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
     }
@@ -13,6 +13,6 @@ export const useBoard = () => {
   
   return {
     deleteBoard,
-    isLoading,
+    isDeleteBookLoading,
   };
 };

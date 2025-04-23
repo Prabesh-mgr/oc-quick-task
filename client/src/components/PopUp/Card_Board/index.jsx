@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createBoards } from "../../../hooks/useBoard/CreateBoard/index.js";
 
-export function CardWithForm({ onSuccess }) {
+export function CardWithForm({ onSuccess,  existingColumns = [], boardId, setShowPopup }) {
   const [boardName, setBoardName] = useState("");
   const [error, setError] = useState("");
   const { createBoard, isLoading: isCreatingBoard } = createBoards();
@@ -14,7 +14,7 @@ export function CardWithForm({ onSuccess }) {
     }
     
     try {
-      const result = await createBoard({ boardName: boardName });
+      const result = createBoard({ boardName: boardName });
       document.dispatchEvent(new CustomEvent("closeboardmodal"));
       
       if (onSuccess) {
@@ -30,7 +30,7 @@ export function CardWithForm({ onSuccess }) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+    <div className="w-full max-w-md mx-auto bg-white backdrop-blur rounded-xl shadow-md overflow-hidden">
       <div className="p-6">
         <h2 className="text-xl font-bold mb-4">Create New Board</h2>
         <form onSubmit={handleSubmit}>
@@ -59,7 +59,7 @@ export function CardWithForm({ onSuccess }) {
             <button
               type="submit"
               disabled={isCreatingBoard}
-              className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-blue-700 disabled:bg-blue-300"
+              className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md disabled:bg-blue-300"
             >
               {isCreatingBoard ? "Creating..." : "Create Board"}
             </button>
