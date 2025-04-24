@@ -31,11 +31,12 @@ router.route('/board/column/:columnId')
   .patch(verifyToken, updateBoardColumn)
   .delete(verifyToken, deleteBoardColumn);
 
-router.get('/userData/:userId',verifyToken, getUserData);
-router.get('/userData/', getAllUsers);
+router.get('/users/:userId',verifyToken, getUserData);
+router.get('/users', getAllUsers);
 
 router.get('/board/column/task/:taskId',verifyToken, getTaskDetails);
 router.post('/board/column/task',verifyToken, createTasks);
 router.delete('/board/column/task/:taskId',verifyToken, deleteTasks);
 router.patch('/board/column/task/:taskId',verifyToken, updateTasks);
+
 export default router;

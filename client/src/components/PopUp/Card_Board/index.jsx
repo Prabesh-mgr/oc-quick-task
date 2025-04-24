@@ -1,24 +1,32 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createBoards } from "../../../hooks/useBoard/CreateBoard/index.js";
 
-export function CardWithForm({ onSuccess,  existingColumns = [], boardId, setShowPopup }) {
+export function CardWithForm({ onSuccess, existingColumns = [], boardId, setShowPopup }) {
   const [boardName, setBoardName] = useState("");
   const [error, setError] = useState("");
   const { createBoard, isLoading: isCreatingBoard } = createBoards();
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!boardName.trim()) {
       setError("Board name is required");
       return;
     }
-    
+
     try {
-      const result = createBoard({ boardName: boardName });
+      const result = createBoard({ boardName });
+
       document.dispatchEvent(new CustomEvent("closeboardmodal"));
-      
+
       if (onSuccess) {
         onSuccess(result.board);
+      }
+      const newBoardId = result?.board?.boardId || result?.boardId;
+      if (newBoardId) {
+        navigate(`/home/${newBoardId}`); 
       }
     } catch (err) {
       if (err.response?.status === 409) {

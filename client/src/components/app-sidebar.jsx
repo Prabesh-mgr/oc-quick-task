@@ -1,6 +1,10 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { BookOpen, Settings2, AlertCircle, Loader2, RefreshCcw } from "lucide-react";
+import {
+  Settings2,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -47,10 +51,7 @@ const data = {
       url: "#",
       icon: () => <img src={board} alt="Board" className="w-4 h-4 rounded-sm" />,
       items: [],
-      // isActive: true,
-
     },
-    
     {
       title: "Settings",
       url: "#",
@@ -88,18 +89,6 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
     }
   };
 
-  const renderCustomTitle = (title) => {
-    if (title === "Create Board") {
-      return (
-        <div className="flex items-center">
-          <span>Create Board</span>
-          <span className="ml-1 text-blue-500 font-bold">+</span>
-        </div>
-      );
-    }
-    return title;
-  };
-
   const updatedNavMain = useMemo(() => {
     return data.navMain.map((item) => {
       if (item.title === "Boards") {
@@ -107,23 +96,19 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
           ...item,
           items: [
             {
-              title: "Create Board +",
+              title: (
+                <div className="flex items-center gap-10 px-1 text-sm text-gray-700 font-bold">
+                  <div onClick={(e) => {
+                        e.preventDefault();
+                        handleCreateBoardClick();
+                      }}>
+                        Create Board
+                        </div>
+                </div>
+               
+              ),
               url: "#",
-              renderTitle: () => renderCustomTitle("Create Board"),
-              onClick: (e) => {
-                e.preventDefault();
-                handleCreateBoardClick();
-              },
-            },
-            {
-              title: "Refresh Boards",
-              url: "#",
-              icon: () => <RefreshCcw className="w-4 h-4" />,
-              onClick: (e) => {
-                e.preventDefault();
-                refreshBoards();
-              },
-              className: "text-gray-500 text-sm mb-2"
+              className: "text-sm py-1",
             },
             ...(isLoadingBoards
               ? [{
@@ -133,7 +118,6 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
                 className: "text-gray-500 italic text-sm"
               }]
               : []),
-
             ...(boardsError
               ? [{
                 title: "Error loading boards",
@@ -146,7 +130,6 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
                 className: "text-red-500 text-sm"
               }]
               : []),
-
             ...(!isLoadingBoards && !boardsError
               ? (Array.isArray(boards) && boards.length > 0
                 ? boards.map((board) => ({
@@ -187,6 +170,7 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
+
       {showPopup && (
         <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6 md:px-0">
           <div className="pointer-events-auto w-full max-w-md p-4">

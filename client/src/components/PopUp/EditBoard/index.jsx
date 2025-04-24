@@ -44,7 +44,7 @@ export const EditBoardPopUp = ({ board, onClose, onSuccess }) => {
           <input
             type="text"
             id="boardName"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
             value={boardName}
             onChange={(e) => setBoardName(e.target.value)}
             placeholder="Enter board name"
@@ -64,7 +64,7 @@ export const EditBoardPopUp = ({ board, onClose, onSuccess }) => {
           
           <button
             onClick={handleSave}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-blue-700 disabled:opacity-50"
             disabled={isUpdateLoading || boardName.trim() === ""}
           >
             {isUpdateLoading ? "Saving..." : "Save"}
