@@ -1,120 +1,118 @@
-import { getUsers } from '@/hooks/users';
-import { useCreateTask } from '@/hooks/useTask/createTask';
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useState } from "react";
+import { useCreateTask } from "../../hooks/useTask/createTask/index.js";
+import { getUsers } from "../../hooks/users/index.js";
 
-export const CreateTaskForm = ({ onSuccess, initialValues = {} }) => {
+export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
+  const { users, isLoadingUsers } = getUsers();
   const { createTask, isCreatingTask } = useCreateTask();
-  const { boards: users, isLoadingUsers } = getUsers();
+  const [taskName, setTaskName] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [assignedTo, setAssignedTo] = useState("");
+  const [completed, setCompleted] = useState(false);
+  const [error, setError] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors }
-  } = useForm({
-    defaultValues: {
-      taskName: initialValues.taskName || '',
-      description: initialValues.description || '',
-      dueDate: initialValues.dueDate || '',
-      assignedTo: initialValues.assignedTo || [],
-      completed: initialValues.completed || false
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    
+    const taskData = {
+      taskName,
+      description,
+      dueDate: dueDate || null,
+      columnId,
+      assignedTo: assignedTo ? [assignedTo] : [],
+      completed,
+    };
+    
+    console.log("Submitting task data:", taskData); 
+    
+    try {
+      await createTask(taskData);
+      if (onTaskCreated) onTaskCreated();
+
+      setTaskName("");
+      setDescription("");
+      setDueDate("");
+      setAssignedTo("");
+      setCompleted(false);
+    } catch (error) {
+      console.error("Error creating task:", error);
+      setError(error.response?.data?.message || "Failed to create task!");
     }
-  });
-
-  const onSubmit = (data) => {
-    createTask(data, {
-      onSuccess: () => {
-        reset();
-        if (onSuccess) onSuccess();
-      }
-    });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          {error}
+        </div>
+      )}
+      
       <div>
-        <label className="block mb-1 font-medium">Task Name</label>
+        <label className="block mb-1">Task Name</label>
         <input
-          {...register("taskName", { required: "Task name is required" })}
-          className="input w-full px-3 py-2 border border-gray-300 rounded-md"
+          type="text"
+          value={taskName}
+          onChange={(e) => setTaskName(e.target.value)}
+          className="border p-2 w-full rounded"
+          required
         />
-        {errors.taskName && <p className="text-red-500 text-sm mt-1">{errors.taskName.message}</p>}
       </div>
-
+      
       <div>
-        <label className="block mb-1 font-medium">Description</label>
+        <label className="block mb-1">Description</label>
         <textarea
-          {...register("description")}
-          className="input w-full px-3 py-2 border border-gray-300 rounded-md h-24"
-        />
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="border p-2 w-full rounded"
+          required
+        ></textarea>
       </div>
-
+      
       <div>
-        <label className="block mb-1 font-medium">Due Date</label>
+        <label className="block mb-1">Due Date</label>
         <input
           type="date"
-          {...register("dueDate", { required: "Due date is required" })}
-          className="input w-full px-3 py-2 border border-gray-300 rounded-md"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="border p-2 w-full rounded"
         />
-        {errors.dueDate && <p className="text-red-500 text-sm mt-1">{errors.dueDate.message}</p>}
       </div>
+      
       <div>
-        <label className="block mb-1 font-medium">Assign To</label>
-        <Controller
-          control={control}
-          name="assignedTo"
-          render={({ field }) => (
-            <select
-              multiple
-              className="input w-full px-3 py-2 border border-gray-300 rounded-md"
-              {...field}
-            >
-              {isLoadingUsers ? (
-                <option>Loading users...</option>
-              ) : (
-                users?.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))
-              )}
-            </select>
-          )}
-        />
-        <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple users</p>
+        <label className="block mb-1">Assign To</label>
+        {isLoadingUsers ? (
+          <p>Loading users...</p>
+        ) : users && users.length > 0 ? (
+          <select
+            value={assignedTo}
+            onChange={(e) => setAssignedTo(e.target.value)}
+            className="border p-2 w-full rounded"
+          >
+            <option value="">Select user</option>
+            {users.map((user) => (
+              <option 
+                key={user.id || user.userId} 
+                value={user.id || user.userId}
+              >
+                {user.firstName} {user.lastName}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <p>No users available</p>
+        )}
       </div>
-
-      <div className="flex items-center">
-        <input 
-          type="checkbox" 
-          id="completed"
-          {...register("completed")} 
-          className="mr-2"
-        />
-        <label htmlFor="completed" className="select-none">Completed</label>
-      </div>
-
-      <div className="flex justify-end gap-3 pt-2">
-        <button 
-          type="button" 
-          onClick={() => {
-            reset();
-            if (onSuccess) onSuccess();
-          }}
-          className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-        >
-          Cancel
-        </button>
-        <button 
-          type="submit" 
-          disabled={isCreatingTask} 
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-300"
-        >
-          {isCreatingTask ? "Creating..." : "Create Task"}
-        </button>
-      </div>
+      
+      <button
+        type="submit"
+        className="bg-black text-white px-4 py-2 rounded hover:bg-blue-600 flex m-auto"
+        disabled={isCreatingTask}
+      >
+        {isCreatingTask ? "Creating..." : "Create Task"}
+      </button>
     </form>
   );
 };

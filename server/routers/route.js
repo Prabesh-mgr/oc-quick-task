@@ -15,6 +15,7 @@ import { createTasks } from '../controller/TaskController/CreateTasks.js';
 import { deleteTasks } from '../controller/TaskController/DeleteTasks.js';
 import { updateTasks } from '../controller/TaskController/UpdateTasks.js';
 import { getTaskDetails } from '../controller/TaskController/GetTaskDetails.js';
+import { updateTaskColumn } from '../controller/TaskController/updateTaskColumns.js';
 
 const router = express.Router();
 router.post('/signup', signUpUser);
@@ -32,10 +33,11 @@ router.route('/board/column/:columnId')
   .delete(verifyToken, deleteBoardColumn);
 
 router.get('/users/:userId',verifyToken, getUserData);
-router.get('/users', getAllUsers);
+router.get('/users',verifyToken, getAllUsers);
 
 router.get('/board/column/task/:taskId',verifyToken, getTaskDetails);
 router.post('/board/column/task',verifyToken, createTasks);
+router.patch('/board/task/:taskId/column', verifyToken, updateTaskColumn);
 router.delete('/board/column/task/:taskId',verifyToken, deleteTasks);
 router.patch('/board/column/task/:taskId',verifyToken, updateTasks);
 

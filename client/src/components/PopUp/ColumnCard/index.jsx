@@ -18,12 +18,11 @@ export const ColumnForm = ({
   
   const isLoading = isColumnLoading || isEditColumnLoading;
 
-  // Initialize form with column data when editing
   useEffect(() => {
     if (editMode && columnToEdit) {
       setColumnName(columnToEdit.columnName);
     } else {
-      setColumnName(""); // Reset for create mode
+      setColumnName(""); 
     }
   }, [editMode, columnToEdit]);
 
@@ -35,7 +34,6 @@ export const ColumnForm = ({
       return;
     }
     
-    // When editing, check if the new name exists in other columns (excluding the current one)
     if (editMode) {
       const otherColumnsNames = existingColumns.filter(name => 
         name !== columnToEdit.columnName
@@ -46,7 +44,6 @@ export const ColumnForm = ({
         return;
       }
     } else {
-      // In create mode, check against all existing columns
       if (existingColumns.includes(columnName.trim())) {
         setError("Column name already exists");
         return;
@@ -56,7 +53,7 @@ export const ColumnForm = ({
     setError("");
     
     if (editMode && columnToEdit) {
-      // Update existing column
+
       editColumn(
         {
           columnId: columnToEdit.columnId,

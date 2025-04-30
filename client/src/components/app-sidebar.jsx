@@ -36,33 +36,11 @@ const data = {
   ],
   navMain: [
     {
-      title: "For you",
-      url: "#",
-      icon: () => <img src={user} alt="User" className="w-4 h-4 rounded-sm" />,
-      items: [
-        {
-          title: "Account",
-          url: "#",
-        },
-      ],
-    },
-    {
       title: "Boards",
       url: "#",
       icon: () => <img src={board} alt="Board" className="w-4 h-4 rounded-sm" />,
       items: [],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        { title: "General", url: "#" },
-        { title: "Team", url: "#" },
-        { title: "Billing", url: "#" },
-        { title: "Limits", url: "#" },
-      ],
-    },
+    }
   ],
 };
 

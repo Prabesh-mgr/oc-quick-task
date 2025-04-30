@@ -5,13 +5,13 @@ export const getUsers = () => {
     const queryClient = useQueryClient();
 
     const {data:users, isLoading: isLoadingUsers, error: errorsError, refetch: refetchUsers} = useQuery({
-      queryKey: ["boards"],
+      queryKey: ["users"],
       queryFn: requestUsers,
       staleTime: 5 * 60 * 1000,
     });
 
-    const refereshUserd = () => {
-      queryClient.invalidateQueries({ queryKey: ["boards"] });
+    const refreshUsers = () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] }); 
     };
 
     return{
@@ -19,7 +19,7 @@ export const getUsers = () => {
         isLoadingUsers,
         errorsError,
         refetchUsers,
-        refereshUserd
+        refreshUsers
     }
 }
     

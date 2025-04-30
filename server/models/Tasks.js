@@ -10,7 +10,7 @@ const Task = sequelize.define('task', {
     userId: {
         type: DataTypes.UUID,
         allowNull: false,
-      },
+    },
     taskName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -34,7 +34,6 @@ const Task = sequelize.define('task', {
         defaultValue: false,
     },
 }, {
-    
     timestamps: true,
 });
 

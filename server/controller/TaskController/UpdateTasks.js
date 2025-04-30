@@ -16,11 +16,12 @@ export const updateTasks = async (req, res) => {
             return res.status(404).json({ message: "Task not found" });
         }
 
-        if (task.userIid !== userId) {
+        if (task.userId !== userId) {
             return res.status(403).json({ message: "You are not authorized to update this task" });
         }
 
         const { taskName, description, dueDate, columnId, assignedTo, completed } = req.body;
+        
         if (taskName) {
             const existingTask = await Task.findOne({
                 where: {

@@ -42,6 +42,53 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: auto; /* Allow horizontal scrolling */
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box; /* Ensure consistent box sizing */
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.columns-container {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding-bottom: 16px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.column {
+  flex-shrink: 0; /* Prevent columns from shrinking */
+  min-width: 300px;
+  max-width: 300px;
+  background-color: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  box-sizing: border-box;
+}
 
 :root {
   --radius: 0.625rem;
