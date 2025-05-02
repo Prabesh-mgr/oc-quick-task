@@ -18,16 +18,6 @@ export const createTasks = async (req, res) => {
             (assignedTo.length > 0 ? assignedTo : null) : 
             (assignedTo ? [assignedTo] : null);
         
-        console.log("Creating task with data:", {
-            taskName,
-            description,
-            dueDate,
-            columnId,
-            assignedTo: processedAssignedTo,
-            completed,
-            userId
-        });
-        
         const newTask = await Task.create({
             taskName,
             description,

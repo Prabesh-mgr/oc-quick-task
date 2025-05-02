@@ -59,14 +59,13 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
   }, [refetchBoards]);
 
   const handleBoardCreated = (newBoard) => {
-    refreshBoards();
+    refetchBoards();
     setShowPopup(false);
 
     if (onCreateBoardSuccess) {
       onCreateBoardSuccess(newBoard);
     }
   };
-
   const updatedNavMain = useMemo(() => {
     return data.navMain.map((item) => {
       if (item.title === "Boards") {
@@ -75,57 +74,63 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
           items: [
             {
               title: (
-                <div className="flex items-center gap-10 px-1 text-sm text-gray-700 font-bold">
-                  <div onClick={(e) => {
-                        e.preventDefault();
-                        handleCreateBoardClick();
-                      }}>
-                        Create Board
-                        </div>
+                <div
+                  className="flex items-center gap-10 px-1 text-sm text-gray-700 font-bold backdrop-blur"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleCreateBoardClick();
+                  }}
+                >
+                  Create Board
                 </div>
-               
               ),
               url: "#",
               className: "text-sm py-1",
             },
             ...(isLoadingBoards
-              ? [{
-                title: "Loading boards...",
-                url: "#",
-                icon: () => <Loader2 className="w-4 h-4 animate-spin" />,
-                className: "text-gray-500 italic text-sm"
-              }]
+              ? [
+                  {
+                    title: "Loading boards...",
+                    url: "#",
+                    icon: () => <Loader2 className="w-4 h-4 animate-spin" />,
+                    className: "text-gray-500 italic text-sm",
+                  },
+                ]
               : []),
             ...(boardsError
-              ? [{
-                title: "Error loading boards",
-                url: "#",
-                icon: () => <AlertCircle className="w-4 h-4 text-red-500" />,
-                onClick: (e) => {
-                  e.preventDefault();
-                  refreshBoards();
-                },
-                className: "text-red-500 text-sm"
-              }]
+              ? [
+                  {
+                    title: "Error loading boards",
+                    url: "#",
+                    icon: () => <AlertCircle className="w-4 h-4 text-red-500" />,
+                    onClick: (e) => {
+                      e.preventDefault();
+                      refreshBoards();
+                    },
+                    className: "text-red-500 text-sm",
+                  },
+                ]
               : []),
             ...(!isLoadingBoards && !boardsError
-              ? (Array.isArray(boards) && boards.length > 0
+              ? Array.isArray(boards) && boards.length > 0
                 ? boards.map((board) => ({
-                  title: board.boardName || board.name || "Untitled Board",
-                  url: `#`,
-                  onClick: (e) => {
-                    e.preventDefault();
-                    if (onBoardSelected) {
-                      onBoardSelected(board);
-                    }
-                  },
-                  className: "pl-1 hover:bg-gray-100 text-gray-700"
-                }))
-                : [{
-                  title: "No boards yet",
-                  url: "#",
-                  className: "text-gray-400 italic text-sm"
-                }])
+                    title: board.boardName || "Untitled Board",
+                    url: `#`,
+                    onClick: (e) => {
+                      e.preventDefault();
+                      if (onBoardSelected) {
+                        onBoardSelected(board);
+                      }
+                    },
+                    className: "pl-1 hover:bg-gray-100 text-gray-700",
+                  }))
+                : [
+                    {
+                      title: "No boards yet",
+                      url: "#",
+                      className: "text-gray-400 italic text-sm",
+                    },
+                  ]
               : []),
           ],
         };
@@ -133,7 +138,6 @@ export function AppSidebar({ onBoardSelected, onCreateBoardSuccess, ...props }) 
       return item;
     });
   }, [boards, isLoadingBoards, boardsError, refreshBoards, onBoardSelected]);
-
   return (
     <>
       <Sidebar collapsible="icon" {...props}>

@@ -1,5 +1,5 @@
 "use client"
-import { ProfileDialog } from "./PopUp/profile.jsx";
+import { EditProfileDialog } from "../components/editUsers/index.jsx";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronsUpDown,
@@ -51,6 +51,24 @@ export function NavUser() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleUserCookieChange = () => {
+      const userCookie = Cookies.get('user');
+      if (userCookie) {
+        try {
+          const parsedUser = JSON.parse(userCookie);
+          setUserData(parsedUser);
+        } catch (error) {
+          console.error("Error parsing user cookie:", error);
+        }
+      }
+    };
+
+    if (!isProfileDialogOpen) {
+      handleUserCookieChange();
+    }
+  }, [isProfileDialogOpen]);
+
   const handleLogOut = () => {
     Cookies.remove('token', { path: '/' });
     Cookies.remove('user', { path: '/' });
@@ -67,7 +85,7 @@ export function NavUser() {
 
   return (
     <>
-      <ProfileDialog
+      <EditProfileDialog
         isOpen={isProfileDialogOpen}
         onOpenChange={setIsProfileDialogOpen}
         userData={userData}
@@ -111,7 +129,7 @@ export function NavUser() {
                 <Avatar className="h-5 w-5 mr-2 rounded-sm">
                   <AvatarImage src={user} alt={fullName} />
                 </Avatar>
-                Profile
+                Edit Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogOut}>
@@ -122,7 +140,6 @@ export function NavUser() {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
-
     </>
   );
 }

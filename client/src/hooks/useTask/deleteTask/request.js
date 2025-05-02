@@ -1,6 +1,6 @@
 import { axiosConfig } from "@/config/axiosConfig";
 
-export const requestDeleteTask = async (taskId) => {
+export const requestDeleteTask = async ({ taskId }) => {
   try {
     const response = await axiosConfig.delete(`/board/column/task/${taskId}`);
     return response.data;

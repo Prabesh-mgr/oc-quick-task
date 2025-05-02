@@ -8,8 +8,7 @@ export const useCreateTask = () => {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["Task"] });
       queryClient.invalidateQueries({ queryKey: ["Tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["Column"] });
-      queryClient.invalidateQueries({ queryKey: ["Columns"] });
+      queryClient.invalidateQueries({ queryKey: ["columns"] });
       queryClient.invalidateQueries({ queryKey: ["Board"] });
       
       if (variables.columnId) {

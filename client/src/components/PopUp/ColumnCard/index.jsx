@@ -72,7 +72,6 @@ export const ColumnForm = ({
         }
       );
     } else {
-      // Create new column
       addColumns(
         {
           boardId: boardId,

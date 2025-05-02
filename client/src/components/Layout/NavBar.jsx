@@ -32,10 +32,6 @@ export const NavBar = ({
     title: "FlowBoard",
     url: "/",
   },
-  menu = [
-    { title: "About", url: "#" },
-    { title: "Contact", url: "#" },
-  ],
   auth = {
     login: { title: "Login", url: "/login" },
     signup: { title: "Sign up", url: "/signup" },
@@ -61,11 +57,7 @@ export const NavBar = ({
                 {logo.title}
               </span>
             </a>
-            <NavigationMenu>
-              <NavigationMenuList>
-                {menu.map((item) => renderMenuItem(item))}
-              </NavigationMenuList>
-            </NavigationMenu>
+           
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => navigate(auth.login.url)}>
@@ -107,18 +99,12 @@ export const NavBar = ({
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col gap-6 p-4">
-                  <Accordion type="single" collapsible className="flex flex-col gap-4">
-                    {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
                   <div className="flex flex-col gap-3">
                     <Button variant="outline" onClick={() => navigate(auth.login.url)}>
                       {auth.login.title}
                     </Button>
                     <Button onClick={() => navigate(auth.signup.url)}>
                       {auth.signup.title}
-                    </Button>
-                    <Button onClick={handleLogOut}>
-                      Logout
                     </Button>
                   </div>
                 </div>

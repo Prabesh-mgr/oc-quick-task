@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripHorizontal } from "lucide-react";
+import { GripHorizontal, Calendar, Clock, Tag, AlertCircle } from "lucide-react";
 import { TaskDetailsModal } from "../TaskDetailsModal.jsx";
 
 export const DraggableTask = ({ task, columnName }) => {
@@ -34,6 +34,37 @@ export const DraggableTask = ({ task, columnName }) => {
     setIsModalOpen(false);
   };
 
+  const formatDueDate = (dateString) => {
+    if (!dateString) return "No due date";
+    
+    try {
+      const date = new Date(dateString);
+      
+      if (isNaN(date.getTime())) {
+        return "Invalid date";
+      }
+      
+      const options = { month: 'short', day: 'numeric' };
+      return date.toLocaleDateString(undefined, options);
+    } catch (e) {
+      console.error("Error formatting date:", e);
+      return "Date error";
+    }
+  };
+
+  const isOverdue = () => {
+    if (!task.dueDate) return false;
+    
+    try {
+      const dueDate = new Date(task.dueDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return dueDate < today;
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
     <>
       <div
@@ -47,11 +78,23 @@ export const DraggableTask = ({ task, columnName }) => {
         <div className="flex justify-between items-start w-full">
           <div className="flex-grow pr-2">
             <p
-              className="text-gray-800 text-sm cursor-pointer underline decoration-gray-400 hover:decoration-gray-600 break-words"
+              className="text-gray-800 font-medium cursor-pointer hover:underline break-words transition-colors"
               onClick={handleTaskNameClick}
             >
               {task.taskName}
             </p>
+            
+            <div className="mt-2">
+              <div 
+                className={`flex items-center text-xs rounded px-2 py-1 ${
+                  !task.dueDate ? 'bg-gray-100 ' : 
+                  isOverdue() ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
+                }`}
+              >
+                <Calendar className="w-3 h-3 mr-1" />
+                <span>Due Date: {formatDueDate(task.taskDueDate)}</span>
+              </div>
+            </div>
           </div>
           <div
             {...listeners}

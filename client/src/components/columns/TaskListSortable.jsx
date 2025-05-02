@@ -41,7 +41,6 @@ function SortableTask({ task, id, index, onTaskClick }) {
   const handleTaskClick = (e) => {
     if (!isDragging) {
       if (!e.target.closest('[role="button"]')) {
-        console.log('Task clicked:', task);
         onTaskClick?.(task);
       }
     }

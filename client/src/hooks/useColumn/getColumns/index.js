@@ -8,9 +8,6 @@ export const useBoardColumns  = (boardId) => {
         queryKey: ["columns", boardId],
         queryFn: () => getBoardColumns(boardId),
         enabled: !!boardId,
-        onSuccess: (data) => {
-            console.log("Columns data fetched successfully:", data);
-        },
         onError: (error) => {
             console.error("Error fetching columns data:", error);
         },

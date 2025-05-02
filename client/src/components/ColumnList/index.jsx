@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { DraggableTask } from "../DraggableTask/index.jsx";
 import { Plus } from "lucide-react";
@@ -12,19 +12,50 @@ export const ColumnList = ({
   onAddColumn,
 }) => {
   const [activeColumnMenu, setActiveColumnMenu] = useState(null);
+  const [orderedColumns, setOrderedColumns] = useState([]);
 
   const toggleColumnMenu = (columnId) => {
     setActiveColumnMenu((prev) => (prev === columnId ? null : columnId));
   };
 
-  const sortedColumns = [...columns].sort((a, b) =>
-    a.columnId.localeCompare(b.columnId)
-  );
+  useEffect(() => {
+    if (!columns || !Array.isArray(columns)) {
+      setOrderedColumns([]);
+      return;
+    }
+
+    const standardSequence = ["To do", "On progress", "Completed"];
+    const standardColumns = [];
+    const otherColumns = [];
+
+    columns.forEach((column) => {
+      const index = standardSequence.findIndex(
+        (name) => column.columnName.toLowerCase() === name.toLowerCase()
+      );
+
+      if (index !== -1) {
+        standardColumns[index] = column;
+      } else {
+        otherColumns.push(column);
+      }
+    });
+
+    const filteredStandardColumns = standardColumns.filter(Boolean);
+
+    const sortedOtherColumns = otherColumns.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+      return a.columnId.localeCompare(b.columnId);
+    });
+
+    setOrderedColumns([...filteredStandardColumns, ...sortedOtherColumns]);
+  }, [columns]);
 
   return (
-    <div className="overflow-x-auto w-full h-full">
-      <div className="flex gap-4 w-max pb-4 pr-4 pt-2">
-        {sortedColumns.map((column) => (
+    <div className="columns-wrapper">
+      <div className="columns-content">
+        {orderedColumns.map((column) => (
           <DroppableColumn
             key={column.columnId}
             column={column}
@@ -33,7 +64,7 @@ export const ColumnList = ({
             onDeleteColumn={onDeleteColumn}
             activeColumnMenu={activeColumnMenu}
             toggleColumnMenu={toggleColumnMenu}
-            className="flex-shrink-0 min-w-[300px] max-w-[300px] bg-gray-100 rounded-md shadow-md"
+            className="board-column"
           >
             <SortableContext
               items={
@@ -43,31 +74,28 @@ export const ColumnList = ({
               }
               strategy={verticalListSortingStrategy}
             >
-              {column.tasks && Array.isArray(column.tasks) && column.tasks.length === 0 ? (
+              {column.tasks && column.tasks.length === 0 ? (
                 <div className="text-sm text-gray-400 p-2 text-center border border-dashed border-gray-200 rounded-md">
-                  No task yet
+                  No tasks yet
                 </div>
               ) : (
                 <div className="space-y-2 w-full" style={{ pointerEvents: "auto" }}>
-                  {column.tasks &&
-                    Array.isArray(column.tasks) &&
-                    column.tasks.map((task) => (
-                      <DraggableTask key={task.taskId} task={task} />
-                    ))}
+                  {column.tasks.map((task) => (
+                    <DraggableTask key={task.taskId} task={task} />
+                  ))}
                 </div>
               )}
             </SortableContext>
           </DroppableColumn>
         ))}
+        <button
+          onClick={onAddColumn}
+          className="w-72 min-w-[280px] h-fit rounded-md bg-white"
+          title="Add new column"
+        >
+          <Plus className="w-5 h-5" />
 
-        <div className="flex-shrink-0 min-w-[300px] max-w-[300px] h-fit bg-gray-50 border border-dashed border-gray-300 rounded-md flex items-center justify-center">
-          <button
-            onClick={onAddColumn}
-            className="p-1 text-gray-600 hover:bg-gray-100 transition flex items-center justify-center w-full"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
-        </div>
+        </button>
       </div>
     </div>
   );

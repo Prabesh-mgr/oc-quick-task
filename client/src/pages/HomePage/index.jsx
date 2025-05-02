@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import { AppSidebar } from "../../components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { CardWithForm } from "../../components/PopUp/Card_Board";
 import { EditBoardPopUp } from "@/components/PopUp/EditBoard";
 import { ConfirmationModal } from "@/components/PopUp/confirmation";
 import { ColumnForm } from "@/components/PopUp/ColumnCard";
 import { CreateTaskForm } from "../../components/TaskForms/index.jsx";
+import { WelcomePopUp } from "../../components/PopUp/WelcomePopUp/index.jsx";
+import { TaskListView } from "../../components/TaskListView/index.jsx";
 
 import { getUserBoards } from "../../hooks/useBoard/GetBoard/index.js";
 import { useBoardColumns } from "../../hooks/useColumn/getColumns/index.js";
@@ -27,6 +29,7 @@ export const HomePage = () => {
   const queryClient = useQueryClient();
   const { boardId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useAuth();
 
   const [selectedBoard, setSelectedBoard] = useState(null);
@@ -34,6 +37,11 @@ export const HomePage = () => {
   const [showAddColumnPopup, setShowAddColumnPopup] = useState(false);
   const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
   const [activeColumnId, setActiveColumnId] = useState(null);
+  
+
+  const [viewMode, setViewMode] = useState(location.pathname.endsWith('/list') ? "list" : "board");
+
+  const [isFirstLogin, setIsFirstLogin] = useState(false);
 
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [boardToDelete, setBoardToDelete] = useState(null);
@@ -45,7 +53,13 @@ export const HomePage = () => {
   const [showDeleteColumnPopup, setShowDeleteColumnPopup] = useState(false);
   const [showEditColumnPopup, setShowEditColumnPopup] = useState(false);
 
-  const { boards, refetchBoards } = getUserBoards();
+  const { 
+    boards, 
+    isLoadingBoards, 
+    boardsError, 
+    refetchBoards, 
+    refreshBoards 
+  } = getUserBoards();
   const {
     columnsData: columns,
     isLoadingColumns,
@@ -57,6 +71,18 @@ export const HomePage = () => {
   const { editColumn, isEditColumnLoading } = useEditColumn();
   const { deleteColumn, isDeleteColumnLoading } = useDeleteColumn();
   const { updateTaskColumn } = useUpdateTaskColumn();
+
+  useEffect(() => {
+    setViewMode(location.pathname.endsWith('/list') ? "list" : "board");
+  }, [location]);
+
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisited) {
+      setIsFirstLogin(true);
+      localStorage.setItem('hasVisitedBefore', 'true');
+    }
+  }, []);
 
   const handleEditBoard = (board) => {
     setBoardToEdit(board);
@@ -128,8 +154,10 @@ export const HomePage = () => {
     setActiveColumnId(null);
   };
 
-  const handleTaskDetailsClick = (task) => {
-    navigate(`/task/${selectedBoard.boardId}/${task.taskId}`);
+  const handleTaskDetailsClick = (taskId) => {
+    if (selectedBoard) {
+      navigate(`/task/${selectedBoard.boardId}/${taskId}`);
+    }
   };
 
   const handleBoardSelect = async (board) => {
@@ -138,8 +166,26 @@ export const HomePage = () => {
   };
 
   const handleBoardCreated = async (newBoard) => {
+    await refreshBoards();
     await refetchBoards();
     navigate(`/home/${newBoard.boardId}`);
+  };
+
+  const handleCreateBoard = () => {
+    setShowPopup(true);
+  };
+
+  const handleToggleView = () => {
+    const newViewMode = viewMode === "board" ? "list" : "board";
+    setViewMode(newViewMode);
+    
+    if (selectedBoard) {
+      if (newViewMode === "list") {
+        navigate(`/home/${selectedBoard.boardId}/list`);
+      } else {
+        navigate(`/home/${selectedBoard.boardId}`);
+      }
+    }
   };
   
   useEffect(() => {
@@ -149,17 +195,32 @@ export const HomePage = () => {
   }, [queryClient]);
 
   useEffect(() => {
-    setSelectedBoard(null);
-    queryClient.resetQueries();
-    setTimeout(() => {
-      refetchBoards();
-    }, 100);
-  }, [currentUser, queryClient, refetchBoards]);
+  }, [currentUser, boards, isLoadingBoards]);
+  
+  useEffect(() => {
+    if (currentUser) {
+      refreshBoards();
+    }
+  }, [currentUser]);
+  
+  useEffect(() => {
+    if (currentUser && !isLoadingBoards && (!boards || boards.length === 0)) {
+      setIsFirstLogin(true);
+      
+      if (boardId) {
+        navigate('/home');
+      }
+    } else {
+      setIsFirstLogin(false);
+    }
+  }, [currentUser, boards, isLoadingBoards, boardId, navigate]);
 
   useEffect(() => {
-    if (boardId && Array.isArray(boards) && boards.length > 0) {
+    if (boardId && Array.isArray(boards) && boards?.length > 0) {
       const matchedBoard = boards.find((b) => b.boardId === boardId);
       setSelectedBoard(matchedBoard || null);
+    } else if (boards?.length === 0) {
+      setSelectedBoard(null);
     }
   }, [boardId, boards]);
 
@@ -216,6 +277,22 @@ export const HomePage = () => {
   };
 
   const renderBoardContent = () => {
+    if (currentUser && isFirstLogin) {
+      return <WelcomePopUp onCreateBoard={handleCreateBoard} />;
+    }
+
+    if (isLoadingBoards) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="w-8 h-8 animate-spin" />
+        </div>
+      );
+    }
+    
+    if (currentUser && (!boards || boards.length === 0)) {
+      return <WelcomePopUp onCreateBoard={handleCreateBoard} />;
+    }
+
     if (!selectedBoard) {
       return (
         <div className="text-center text-muted-foreground mt-8">
@@ -226,9 +303,8 @@ export const HomePage = () => {
 
     if (isLoadingColumns) {
       return (
-        <div className="text-center mt-8">
-          <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-          <p className="text-muted-foreground mt-2">Loading columns...</p>
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="w-8 h-8 animate-spin" />
         </div>
       );
     }
@@ -248,23 +324,34 @@ export const HomePage = () => {
     }
 
     return (
-      <div className="mt-6">
+      <div className="board-container">
         <BoardHeader
           selectedBoard={selectedBoard}
           onDelete={confirmDeleteBoard}
           onEdit={handleEditBoard}
+          viewMode={viewMode}
+          onToggleView={handleToggleView}
         />
 
-        <DndContextProvider onDragEnd={handleDragEnd}>
-          <ColumnList
+        {viewMode === "board" ? (
+          <DndContextProvider onDragEnd={handleDragEnd}>
+            <ColumnList
+              columns={columns}
+              onAddTask={handleAddTask}
+              onTaskClick={handleTaskDetailsClick}
+              onEditColumn={handleEditColumn}
+              onDeleteColumn={handleDeleteColumn}
+              onAddColumn={() => setShowAddColumnPopup(true)}
+            />
+          </DndContextProvider>
+        ) : (
+          <TaskListView 
             columns={columns}
-            onAddTask={handleAddTask}
             onTaskClick={handleTaskDetailsClick}
-            onEditColumn={handleEditColumn}
-            onDeleteColumn={handleDeleteColumn}
-            onAddColumn={() => setShowAddColumnPopup(true)}
+            isLoading={isLoadingColumns}
+            refetchColumns={refetchColumns}
           />
-        </DndContextProvider>
+        )}
       </div>
     );
   };

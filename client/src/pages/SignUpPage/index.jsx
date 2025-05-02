@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signUpValidationSchema } from "../../components/YupValidation/index";
-import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import logoImage from "../../assets/logo.png";
 import { userSignUpUser } from "@/hooks/useUserAuth/useSignUp";
 import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 export const SignUpPage = () => {
   const navigate = useNavigate();
@@ -22,16 +22,19 @@ export const SignUpPage = () => {
 
   const { addUsers, isUserLoading } = userSignUpUser();
 
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (token) {
+      navigate('/home');
+    }
+  }, [navigate]);
 
   const onSubmit = async (data) => {
     const { confirmPassword, password, ...rest } = data;
     const formData = { ...rest, password };
-  
-    addUsers(formData, {
-      onSuccess: () => {
-        reset();
-      },
-    });
+    
+    console.log('Submitting signup form with data:', { ...formData, password: '****' });
+    addUsers(formData);
   };  
 
   const heading = "Signup";
@@ -125,7 +128,7 @@ export const SignUpPage = () => {
             )}
           </div>
           <Button type="submit" className="w-full">
-          {isUserLoading ? "Signing Up..." : "Sign Up"}
+            {isUserLoading ? "Signing Up..." : "Sign Up"}
           </Button>
         </form>
         <div className="mt-6 text-sm text-muted-foreground text-center">

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useCreateTask } from "../../hooks/useTask/createTask/index.js";
 import { getUsers } from "../../hooks/users/index.js";
+import { useBoardColumns } from "@/hooks/useColumn/getColumns/index.js";
+import { TaskDetailsModal } from "../TaskDetailsModal.jsx";
 
 export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
   const { users, isLoadingUsers } = getUsers();
@@ -12,10 +14,15 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
   const [completed, setCompleted] = useState(false);
   const [error, setError] = useState("");
 
+  const boardId = TaskDetailsModal?.boardId;
+  const { columnsData, isLoading: isLoadingColumns, refetchColumns } = useBoardColumns(boardId);
+
+
   const handleSubmit = async (e) => {
+    refetchColumns();
     e.preventDefault();
     setError("");
-    
+
     const taskData = {
       taskName,
       description,
@@ -24,9 +31,8 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
       assignedTo: assignedTo ? [assignedTo] : [],
       completed,
     };
-    
-    console.log("Submitting task data:", taskData); 
-    
+
+
     try {
       await createTask(taskData);
       if (onTaskCreated) onTaskCreated();
@@ -49,7 +55,7 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
           {error}
         </div>
       )}
-      
+
       <div>
         <label className="block mb-1">Task Name</label>
         <input
@@ -60,7 +66,7 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
           required
         />
       </div>
-      
+
       <div>
         <label className="block mb-1">Description</label>
         <textarea
@@ -70,7 +76,7 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
           required
         ></textarea>
       </div>
-      
+
       <div>
         <label className="block mb-1">Due Date</label>
         <input
@@ -80,7 +86,7 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
           className="border p-2 w-full rounded"
         />
       </div>
-      
+
       <div>
         <label className="block mb-1">Assign To</label>
         {isLoadingUsers ? (
@@ -93,8 +99,8 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
           >
             <option value="">Select user</option>
             {users.map((user) => (
-              <option 
-                key={user.id || user.userId} 
+              <option
+                key={user.id || user.userId}
                 value={user.id || user.userId}
               >
                 {user.firstName} {user.lastName}
@@ -105,7 +111,7 @@ export const CreateTaskForm = ({ columnId, onTaskCreated }) => {
           <p>No users available</p>
         )}
       </div>
-      
+
       <button
         type="submit"
         className="bg-black text-white px-4 py-2 rounded hover:bg-blue-600 flex m-auto"
